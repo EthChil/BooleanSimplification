@@ -13,8 +13,8 @@ for term in terms:
     tempArr = []
     for var in range(len(term)):
         if(len(term)-1 > var and term[var+1] == "'"):
-            for i in range(alphabet.index(term[var])):
-                if(tempArr[i] == None):
+            for i in range(alphabet.index(term[var])+1):
+                if (len(tempArr) == i):
                     tempArr.append(0)
             tempArr[alphabet.index(term[var])] = -1
         elif(alphabet.count(term[var]) > 0):
