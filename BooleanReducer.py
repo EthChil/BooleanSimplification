@@ -4,7 +4,7 @@ import numpy as np
 alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U",
             "V", "W", "X", "Y", "Z"]
 
-booleanStatement = input("Enter Boolean Statement in the form of sum of products")
+booleanStatement = raw_input("Enter Boolean Statement in the form of sum of products")
 
 booleanStatement = booleanStatement.replace(" ", "")
 terms = booleanStatement.split("+")
