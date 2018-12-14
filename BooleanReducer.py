@@ -29,20 +29,28 @@ for term in terms:
 print(statement)
 
 
-def generateDegreeOfComparibility(arr):
-    varCount = []
-    complementVarCount = []
-
-    for term in arr:
-        for var in range(len(term)):
-            if (var >= len(varCount)):
-                varCount.append(0)
-            if(term[var] == 1):
-                varCount[var] += 1
-            if(term[var] == -1):
-                complementVarCount[var] += 1
-
-    print(varCount)
 
 
-generateDegreeOfComparibility(statement)
+def multiplyArrays(arr1, arr2):
+    return [arr1 * arr2 for arr1, arr2 in zip(arr1, arr2)]
+
+def generateChilderhoseLiuTable(input):
+    CLTable = []
+
+    for x in input:
+        tempArr = []
+        for y in input:
+            if(x == y):
+                tempArr.append(0)
+            else:
+                n = multiplyArrays(x, y)
+                if(-1 in n):
+                    tempArr.append(0)
+                else:
+                    print("")
+
+
+
+
+
+
