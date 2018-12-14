@@ -3,7 +3,6 @@
 #include <string>
 #include <sstream>
 #include <iterator>
-#include <boost/algorithm/string.hpp>
 
 using namespace std;
 
@@ -12,11 +11,21 @@ int main() {
 
     vector<string> tokens;
 
+    vector< vector<int> > terms;
+
     while(cin >> rawBool){
-        if(!rawBool.find("+")) tokens.push_back(boost::algorithm::trim_copy(rawBool));
+        if(rawBool.find("=") != string::npos) break;
+        if(rawBool.find("+") == string::npos) {
+            vector<int> term;
+
+            for(int i = 0; i < rawBool.size(); i++){
+                if(term[int(rawBool[i]) - 65] == nullptr) term.push_back()
+                term.insert(int(rawBool[i]) - 65, )
+            }
+        }
     }
 
-    cout << tokens[1] << endl;
+    for(int i = 0; i < tokens.size(); i++) cout << tokens[i] << endl;
     vector< vector<int> > data;
 
     data.push_back(vector<int> (5, 40));
