@@ -10,12 +10,16 @@ class Statement:
     highestVar = 0
     container = np.array([])
     childerhoseLiuMap = np.array([])
+    tags = []
+    raw = ""
 
     def __init__(self, rawString):
 
         #split and strip input
         rawString = rawString.replace(" ", "")
         terms = rawString.split("+")
+        self.tags = terms
+        self.raw = rawString
 
         #temp arr
         regArr = []
@@ -64,18 +68,27 @@ class Statement:
             return pow(2, self.nDiscreteVars - (sum(np.abs(np.subtract(np.abs(arr1), np.abs(arr2)))) + sum(product)))
 
     def printChilderhoseLiuMap(self):
-        tempArr = np.array(np.zeros((self.nDiscreteVars, self.nDiscreteVars), np.int8))
+        #tempArr = np.array(np.zeros((self.nDiscreteVars, self.nDiscreteVars), np.int8))
+
+        print("ChilderhoseLiu Mapping of " + self.raw)
+        print("").ljust(10),
+        for i in self.tags:
+            print(i).ljust(10),
+        print("")
+
 
         for term1Ptr in range(len(self.container)):
+            print(self.tags[term1Ptr]).ljust(10),
             for term2Ptr in range(len(self.container)):
                 if (term2Ptr != term1Ptr):
-                    tempArr[term1Ptr][term2Ptr] = self.calculateOverlapNum(self.container[term1Ptr], self.container[term2Ptr])
-
-        print(tempArr)
+                    print(str(self.calculateOverlapNum(self.container[term1Ptr], self.container[term2Ptr]))).ljust(10),
+                else:
+                    print("X").ljust(10),
+            print("")
 
 
     def generateChilderhoseLiuMap(self):
-        self.childerhoseLiuMap = np.array(np.zeros((self.nDiscreteVars, self.nDiscreteVars), np.int8))
+        self.childerhoseLiuMap = np.array(np.zeros((len(self.container), len(self.container)), np.int8))
 
         for term1Ptr in range(len(self.container)):
             for term2Ptr in range(len(self.container)):
@@ -91,13 +104,7 @@ class Statement:
 #AB     [1,1,0]
 #BC     [0,1,1]
 #A'C    [-1,0,1]
-
-[0, 1, 0]
-[1, 0, 1]
-
-[0, 0, 1]
-[1, 1, 0]
-
+#A'B' + C'D'A' + C'D'B + C'AB + DAB
 
 stat = Statement(booleanStatement)
 print(stat.generateChilderhoseLiuMap())
