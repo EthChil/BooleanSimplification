@@ -9,6 +9,7 @@ class Statement:
     nDiscreteVars = 0
     highestVar = 0
     container = np.array([])
+    childerhoseLiuMap = np.array([])
 
     def __init__(self, rawString):
 
@@ -51,20 +52,59 @@ class Statement:
                         if (self.container[i][ord(terms[i][q])-65] == 0):
                             self.container[i][ord(terms[i][q])-65] = 1;
 
+    def calculateGroupSize(self, varIn):
+        return pow(2, self.nDiscreteVars - sum(map(abs, varIn)))
+
+    def calculateOverlapNum(self, arr1, arr2):
+        product = np.multiply(arr1, arr2)
+
+        if(-1 in product):
+            return 0
+        else:
+            return pow(2, self.nDiscreteVars - (sum(np.abs(np.subtract(np.abs(arr1), np.abs(arr2)))) + sum(product)))
+
+    def printChilderhoseLiuMap(self):
+        tempArr = np.array(np.zeros((self.nDiscreteVars, self.nDiscreteVars), np.int8))
+
+        for term1Ptr in range(len(self.container)):
+            for term2Ptr in range(len(self.container)):
+                if (term2Ptr != term1Ptr):
+                    tempArr[term1Ptr][term2Ptr] = self.calculateOverlapNum(self.container[term1Ptr], self.container[term2Ptr])
+
+        print(tempArr)
+
+
     def generateChilderhoseLiuMap(self):
+        self.childerhoseLiuMap = np.array(np.zeros((self.nDiscreteVars, self.nDiscreteVars), np.int8))
+
+        for term1Ptr in range(len(self.container)):
+            for term2Ptr in range(len(self.container)):
+                if (term2Ptr != term1Ptr):
+                    self.childerhoseLiuMap[term1Ptr][term2Ptr] = self.calculateOverlapNum(self.container[term1Ptr], self.container[term2Ptr])
+
+        return self.childerhoseLiuMap
+
+    #def generateTailQuotient(self):
 
 
 
+#AB     [1,1,0]
+#BC     [0,1,1]
+#A'C    [-1,0,1]
 
+[0, 1, 0]
+[1, 0, 1]
 
-
+[0, 0, 1]
+[1, 1, 0]
 
 
 stat = Statement(booleanStatement)
+print(stat.generateChilderhoseLiuMap())
+stat.printChilderhoseLiuMap()
 
 
 '''
-
 for term in terms:
     tempArr = []
     for var in range(len(term)):
