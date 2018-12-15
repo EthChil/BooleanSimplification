@@ -68,8 +68,6 @@ class Statement:
             return pow(2, self.nDiscreteVars - (sum(np.abs(np.subtract(arr1, arr2))) + sum(product)))
 
     def printChilderhoseLiuMap(self):
-        #tempArr = np.array(np.zeros((self.nDiscreteVars, self.nDiscreteVars), np.int8))
-
         print("ChilderhoseLiu Mapping of " + self.raw)
         print("").ljust(10),
         for i in self.tags:
@@ -97,9 +95,10 @@ class Statement:
 
         return self.childerhoseLiuMap
 
-    #def generateTailQuotient(self):
+    #tdef generateTailQuotient(self):
 
 
+#MAIN PROGRAM
 
 #AB     [1,1,0]
 #BC     [0,1,1]
@@ -109,39 +108,3 @@ class Statement:
 stat = Statement(booleanStatement)
 print(stat.generateChilderhoseLiuMap())
 stat.printChilderhoseLiuMap()
-
-
-'''
-for term in terms:
-    tempArr = []
-    for var in range(len(term)):
-        #if the var is complimented
-        if (len(term) - 1 > var and term[var + 1] == "'"):
-            for i in range(ord(term[var]) - 64):
-                if (len(tempArr) == i):
-                    tempArr.append(0)
-            tempArr[ord(term[var]) - 65] = -1
-        #if the var isn't complimented
-        elif (ord(term[var]) - 65 > 0):
-            for i in range(ord(term[var]) - 64):
-                if (len(tempArr) == i):
-                    tempArr.append(0)
-            tempArr[ord(term[var]) - 65] = 1
-
-
-    statement.append(tempArr)
-print(statement)
-
-npArr = np.array(statement, np.int8)
-print(statement)
-
-
-arr3 = np.array([1, 2, 3, 4])
-
-arr3 = np.pad(arr3, (3, 3), 'constant')
-
-print(arr3)
-
-print(np.add(arr3[0], arr3[1]))
-
-'''
