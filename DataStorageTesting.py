@@ -65,7 +65,7 @@ class Statement:
         if(-1 in product):
             return 0
         else:
-            return pow(2, self.nDiscreteVars - (sum(np.abs(np.subtract(np.abs(arr1), np.abs(arr2)))) + sum(product)))
+            return pow(2, self.nDiscreteVars - (sum(np.abs(np.subtract(arr1, arr2))) + sum(product)))
 
     def printChilderhoseLiuMap(self):
         #tempArr = np.array(np.zeros((self.nDiscreteVars, self.nDiscreteVars), np.int8))
