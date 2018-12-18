@@ -95,7 +95,8 @@ class Statement:
 
         return self.childerhoseLiuMap
 
-    #tdef generateTailQuotient(self):
+    def generateTailQuotient(self, row, term):
+        return self.calculateGroupSize(term) - sum(row)
 
 
 #MAIN PROGRAM
