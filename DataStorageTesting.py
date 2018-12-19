@@ -1,9 +1,8 @@
-import re
+import time
 import numpy as np
 
 
 booleanStatement = raw_input("Enter Boolean Statement in the form of sum of products")
-
 
 class Statement:
     nDiscreteVars = 0
@@ -106,24 +105,21 @@ class Statement:
         ghost = 0
         tail = 0
 
-        while(ghostNotFound):
+        for row in range(len(self.childerhoseLiuMap)):
+            tempOut = self.generateTailQuotient(self.childerhoseLiuMap[row], self.container[row])
+            if(tempOut > tailNum):
+                tailNum = tempOut
+                tail = row
+            if(tempOut < ghostNum):
+                ghostNum = tempOut
+                ghost = row
+            if (abs(self.childerhoseLiuMap[tail][ghost]) + abs(self.childerhoseLiuMap[ghost][tail])):
+                break
 
-            for row in self.childerhoseLiuMap:
-                tempOut = self.generateTailQuotient(row, self.container[index(row)])
-                if()
 
-            tail = self.generateTailQuotient()
-            ghost
-
-            print(tail)
-            print(ghost)
-
-            if(2 in np.add(np.abs(self.childerhoseLiuMap[tail]), np.abs(self.childerhoseLiuMap[ghost]))):
-                ghostNotFound = False
-
-        print(tail)
-        print(ghost)
-
+        self.container = np.delete(self.container, ghost, axis=0)
+        self.container = np.delete(self.container, ghost, axis=1)
+        del self.tags[ghost]
 
 
 #MAIN PROGRAM
@@ -136,5 +132,14 @@ class Statement:
 stat = Statement(booleanStatement)
 stat.printChilderhoseLiuMap()
 stat.generateChilderhoseLiuMap()
-stat.removeGhostTerm()
 
+stamp = time.time()
+stat.removeGhostTerm()
+stat.printChilderhoseLiuMap()
+timeTook = (time.time() - stamp)*1000000000
+
+print("NS = " + str(timeTook))
+
+#0.25 ns per cycle
+print("At 3ghz that is " + str((round(timeTook/0.25))) + " Processor Cycles")
+print(str(round(timeTook/0.25)))
