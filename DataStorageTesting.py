@@ -98,6 +98,33 @@ class Statement:
     def generateTailQuotient(self, row, term):
         return self.calculateGroupSize(term) - sum(row)
 
+    def removeGhostTerm(self):
+
+        ghostNotFound = True;
+        ghostNum = 1000
+        tailNum = -1000
+        ghost = 0
+        tail = 0
+
+        while(ghostNotFound):
+
+            for row in self.childerhoseLiuMap:
+                tempOut = self.generateTailQuotient(row, self.container[index(row)])
+                if()
+
+            tail = self.generateTailQuotient()
+            ghost
+
+            print(tail)
+            print(ghost)
+
+            if(2 in np.add(np.abs(self.childerhoseLiuMap[tail]), np.abs(self.childerhoseLiuMap[ghost]))):
+                ghostNotFound = False
+
+        print(tail)
+        print(ghost)
+
+
 
 #MAIN PROGRAM
 
@@ -107,5 +134,7 @@ class Statement:
 #A'B' + C'D'A' + C'D'B + C'AB + DAB
 
 stat = Statement(booleanStatement)
-print(stat.generateChilderhoseLiuMap())
 stat.printChilderhoseLiuMap()
+stat.generateChilderhoseLiuMap()
+stat.removeGhostTerm()
+
