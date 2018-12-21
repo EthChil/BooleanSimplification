@@ -167,7 +167,7 @@ class Statement:
         if(modifier == "verbose"):
             self.printChilderhoseLiuMap()
 
-        self.removeGhostTerm()
+        self.removeGhostTerm(modifier)
 
 
 
@@ -183,12 +183,14 @@ class Statement:
 #A'B' + C'D'A' + C'D'B + C'AB + AC'D + B'C'D = A'B' + C'D'B + AC'D
 #AB + BC + A'C
 
+#A'B'C+A'CE+A'CDE+BD'+ABC'+ABCE+ABDE+ACDE
+
 stat = Statement(booleanStatement)
 stat.printChilderhoseLiuMap()
 
 stamp = time.time()
 
-stat.removeGhostTerm("regular")
+stat.removeGhostTerm("verbose")
 stat.printChilderhoseLiuMap()
 
 timeTook = (time.time() - stamp)*1000000000
