@@ -97,29 +97,52 @@ class Statement:
     def generateTailQuotient(self, row, term):
         return self.calculateGroupSize(term) - sum(row)
 
-    def removeGhostTerm(self):
-
-        ghostNotFound = True;
+    def findGhost(self, TQ):
         ghostNum = 1000
         tailNum = -1000
         ghost = 0
         tail = 0
 
-        for row in range(len(self.childerhoseLiuMap)):
-            tempOut = self.generateTailQuotient(self.childerhoseLiuMap[row], self.container[row])
-            if(tempOut > tailNum):
-                tailNum = tempOut
-                tail = row
-            if(tempOut < ghostNum):
-                ghostNum = tempOut
-                ghost = row
-            if (abs(self.childerhoseLiuMap[tail][ghost]) + abs(self.childerhoseLiuMap[ghost][tail])):
-                break
+        for i in range(len(TQ)):
+            if TQ[i] < ghostNum:
+                ghostNum = TQ[i]
+                ghost = i
+            if TQ[i] > tailNum:
+                tailNum = TQ[i]
+                tail = i
 
+        if (abs(self.childerhoseLiuMap[tail][ghost]) + abs(self.childerhoseLiuMap[ghost][tail])):
+            return ghost
+        else:
+            del TQ[ghost]
+            del TQ[tail]
+            return self.findGhost(TQ)
+
+    def removeGhostTerm(self):
+
+
+        TQ = []
+
+        for row in range(len(self.childerhoseLiuMap)):
+            TQ.append(self.generateTailQuotient(self.childerhoseLiuMap[row], self.container[row]))
+
+        #remove term, it isn't a ghost or tail
+        for q in range(len(TQ)):
+            if(TQ[q] == self.calculateGroupSize(self.container[q])):
+                del TQ[q]
+
+        #end condition all TQs are equal
+        if(TQ.count(TQ[0]) == len(TQ)):
+            return
+
+        ghost = self.findGhost(TQ)
 
         self.container = np.delete(self.container, ghost, axis=0)
         self.container = np.delete(self.container, ghost, axis=1)
         del self.tags[ghost]
+
+
+
 
 
 #MAIN PROGRAM
