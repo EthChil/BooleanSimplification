@@ -67,7 +67,13 @@ class Statement:
             return pow(2, self.nDiscreteVars - (sum(np.abs(np.subtract(arr1, arr2))) + sum(product)))
 
     def printChilderhoseLiuMap(self):
-        print("ChilderhoseLiu Mapping of " + self.raw)
+        terms = "a"
+        for i in self.tags:
+            if(terms == "a"):
+                terms = i
+            else:
+                terms = terms + "+" + i
+        print("ChilderhoseLiu Mapping of " + terms)
         print("").ljust(10),
         for i in self.tags:
             print(i).ljust(10),
@@ -97,31 +103,32 @@ class Statement:
     def generateTailQuotient(self, row, term):
         return self.calculateGroupSize(term) - sum(row)
 
-    def findGhost(self, TQ):
+    def findGhost(self, TQ, BL):
         ghostNum = 1000
         tailNum = -1000
         ghost = 0
         tail = 0
 
         for i in range(len(TQ)):
-            if TQ[i] < ghostNum:
-                ghostNum = TQ[i]
-                ghost = i
-            if TQ[i] > tailNum:
-                tailNum = TQ[i]
-                tail = i
+            if(i not in BL):
+                if TQ[i] < ghostNum:
+                    ghostNum = TQ[i]
+                    ghost = i
+                if TQ[i] > tailNum:
+                    tailNum = TQ[i]
+                    tail = i
 
-        if (abs(self.childerhoseLiuMap[tail][ghost]) + abs(self.childerhoseLiuMap[ghost][tail])):
+        if (abs(self.childerhoseLiuMap[tail][ghost]) + abs(self.childerhoseLiuMap[ghost][tail]) == 2):
             return ghost
         else:
-            del TQ[ghost]
-            del TQ[tail]
-            return self.findGhost(TQ)
+            BL.append(ghost)
+            return self.findGhost(TQ, BL)
 
-    def removeGhostTerm(self):
-
-
+    def removeGhostTerm(self, modifier):
         TQ = []
+        BL = []
+
+        self.childerhoseLiuMap = self.generateChilderhoseLiuMap()
 
         for row in range(len(self.childerhoseLiuMap)):
             TQ.append(self.generateTailQuotient(self.childerhoseLiuMap[row], self.container[row]))
@@ -129,17 +136,40 @@ class Statement:
         #remove term, it isn't a ghost or tail
         for q in range(len(TQ)):
             if(TQ[q] == self.calculateGroupSize(self.container[q])):
-                del TQ[q]
+                BL.append(q)
 
         #end condition all TQs are equal
-        if(TQ.count(TQ[0]) == len(TQ)):
-            return
+        if(len(BL) > 0):
+            firstNum = 0
+            started = False
+            doExit = True
 
-        ghost = self.findGhost(TQ)
+            for i in range(len(TQ)):
+                if(i not in BL):
+                    if(started == False):
+                        firstNum = TQ[i]
+                        started = True
+                    elif(firstNum != TQ[i]):
+                        doExit = False
+            if(doExit):
+                return
+        else:
+            if(TQ.count(TQ[0]) == len(TQ)):
+                return
 
-        self.container = np.delete(self.container, ghost, axis=0)
-        self.container = np.delete(self.container, ghost, axis=1)
+        ghost = self.findGhost(TQ, BL)
+
+        self.childerhoseLiuMap = np.delete(self.childerhoseLiuMap, ghost, axis=0)
+        self.childerhoseLiuMap = np.delete(self.childerhoseLiuMap, ghost, axis=1)
         del self.tags[ghost]
+        self.container = np.delete(self.container, ghost, axis=0)
+
+        if(modifier == "verbose"):
+            self.printChilderhoseLiuMap()
+
+        self.removeGhostTerm()
+
+
 
 
 
@@ -150,15 +180,17 @@ class Statement:
 #AB     [1,1,0]
 #BC     [0,1,1]
 #A'C    [-1,0,1]
-#A'B' + C'D'A' + C'D'B + C'AB + DAB
+#A'B' + C'D'A' + C'D'B + C'AB + AC'D + B'C'D = A'B' + C'D'B + AC'D
+#AB + BC + A'C
 
 stat = Statement(booleanStatement)
 stat.printChilderhoseLiuMap()
-stat.generateChilderhoseLiuMap()
 
 stamp = time.time()
-stat.removeGhostTerm()
+
+stat.removeGhostTerm("regular")
 stat.printChilderhoseLiuMap()
+
 timeTook = (time.time() - stamp)*1000000000
 
 print("NS = " + str(timeTook))
