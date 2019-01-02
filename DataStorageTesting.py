@@ -133,6 +133,15 @@ class Statement:
         for row in range(len(self.childerhoseLiuMap)):
             TQ.append(self.generateTailQuotient(self.childerhoseLiuMap[row], self.container[row]))
 
+        #if all of the TQs are above 0 then exit
+        endCond = False
+        for q in TQ:
+            if(TQ <= 0):
+                endCond = True
+
+        if(endCond):
+            return
+
         #remove term, it isn't a ghost or tail
         for q in range(len(TQ)):
             if(TQ[q] == self.calculateGroupSize(self.container[q])):
