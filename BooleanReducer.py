@@ -5,7 +5,9 @@ import numpy as np
 #TODO: look into the int8 stuff for numpy array
 
 
-booleanStatement = raw_input("Enter Boolean Statement in the form of sum of products")
+booleanStatement = input("Enter Boolean Statement in the form of sum of products")
+
+#A'B'D'E'F'+A'B'CD'E'+A'CD'E'F+A'BCD'F+A'BD'EF+A'BC'D'E+BC'D'EF'
 
 class Statement:
     nDiscreteVars = 0
@@ -91,19 +93,19 @@ class Statement:
             else:
                 terms = terms + "+" + i
         print("ChilderhoseLiu Mapping of " + terms)
-        print("").ljust(10),
+        print("".ljust(10), end ="")
         for i in self.tags:
-            print(i).ljust(10),
+            print(i.ljust(10), end ="")
         print("")
 
 
         for term1Ptr in range(len(self.container)):
-            print(self.tags[term1Ptr]).ljust(10),
+            print(self.tags[term1Ptr].ljust(10), end ="")
             for term2Ptr in range(len(self.container)):
                 if (term2Ptr != term1Ptr):
-                    print(str(self.calculateOverlapNum(self.container[term1Ptr], self.container[term2Ptr]))).ljust(10),
+                    print(str(self.calculateOverlapNum(self.container[term1Ptr], self.container[term2Ptr])).ljust(10), end ="")
                 else:
-                    print("X").ljust(10),
+                    print("X".ljust(10), end ="")
             print("")
 
 
@@ -207,7 +209,7 @@ class Statement:
                 if(not np.array_equal(set[term1], set[term2])):
                     if(sum(np.subtract(np.abs(set[term1]), np.abs(set[term2]))) == 0):
                         if(1 not in np.abs(np.add(set[term1], set[term2])) and sum(np.abs(np.add(set[term1], set[term2]))) + 2 == sum(np.abs(set[term1]))*2):
-                            print("Merging " + self.tags[term1] + " and " + self.tags[term2]),
+                            print("Merging " + self.tags[term1] + " and " + self.tags[term2], end ="")
                             self.container[term1] = np.divide(np.add(set[term1], set[term2]), 2)
                             self.container = np.delete(self.container, term2, axis=0)
                             del self.tags[term2]
