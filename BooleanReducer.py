@@ -3,9 +3,46 @@ import numpy as np
 
 #TODO: compare speed difference of map(abs, arr) vs np.abs(arr)
 #TODO: look into the int8 stuff for numpy array
+#TODO: print the total overlaps at every step and the TQs
+#TODO: render truth tables
+#TODO: New class to generate all boolean expressions
+
+class generateExpressions:
+    container = np.array([])
+
+    def __init__(self, varCount):
+        truthTable = []
 
 
-booleanStatement = raw_input("Enter Boolean Statement in the form of sum of products")
+    def genTruthTable(self, varCount):
+        table = []
+
+        '''
+        0
+        1
+        
+        0 0
+        0 1
+        1 0 
+        1 1
+        
+        0 0 0
+        0 0 1
+        0 1 0
+        0 1 1
+        1 0 0
+        1 0 1
+        1 1 0
+        1 1 1
+        '''
+
+        for i in range(pow(2, varCount)):
+            for i in range(varCount):
+                pow(2, varCount-i) / 2
+                #do a thing think about it later
+
+
+
 
 class Statement:
     nDiscreteVars = 0
@@ -91,19 +128,19 @@ class Statement:
             else:
                 terms = terms + "+" + i
         print("ChilderhoseLiu Mapping of " + terms)
-        print("").ljust(10),
+        print("".ljust(10), end="")
         for i in self.tags:
-            print(i).ljust(10),
+            print(i.ljust(10), end="")
         print("")
 
 
         for term1Ptr in range(len(self.container)):
-            print(self.tags[term1Ptr]).ljust(10),
+            print(self.tags[term1Ptr].ljust(10), end="")
             for term2Ptr in range(len(self.container)):
                 if (term2Ptr != term1Ptr):
-                    print(str(self.calculateOverlapNum(self.container[term1Ptr], self.container[term2Ptr]))).ljust(10),
+                    print(str(self.calculateOverlapNum(self.container[term1Ptr], self.container[term2Ptr])).ljust(10), end="")
                 else:
-                    print("X").ljust(10),
+                    print("X".ljust(10), end="")
             print("")
 
 
@@ -154,7 +191,7 @@ class Statement:
         for row in range(len(self.childerhoseLiuMap)):
             TQ.append(self.generateTailQuotient(self.childerhoseLiuMap[row], self.container[row]))
 
-        #if all of the TQs are below 0 then exit
+        #if all of the TQs are above 0 then exit
         endCond = True
         for q in TQ:
             if(q <= 0):
@@ -214,6 +251,13 @@ class Statement:
                             self.tags[term1] = self.genTermText(self.container[term1])
                             print("into " + self.tags[term1])
 
+                if(term1 != term2 and np.array_equal(set[term1], set[term2])):
+                    print("Removed duplicate " + self.tags[term1])
+                    self.container = np.delete(self.container, term2, axis=0)
+                    del self.tags[term2]
+
+
+
     def genTermText(self, term):
         output = ""
 
@@ -241,6 +285,8 @@ class Statement:
 #A'B'C+A'CE+A'CDE+BD'+ABC'+ABCE+ABDE+ACDE
 #D'B + A'B'C + ABC' + A'CE + CDE + EABC + ABDE (merged no trivial)
 #D'B + A'B'C + ABC' + A'CE + ACDE + EABC + ABDE + A'CDE
+
+booleanStatement = input("Enter Boolean Statement in the form of sum of products")
 
 stat = Statement(booleanStatement, "-verbose -trivial")
 stat.printChilderhoseLiuMap()
