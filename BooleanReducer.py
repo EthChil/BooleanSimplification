@@ -1,5 +1,6 @@
 import time
 import numpy as np
+import itertools
 
 #TODO: compare speed difference of map(abs, arr) vs np.abs(arr)
 #TODO: look into the int8 stuff for numpy array
@@ -11,37 +12,22 @@ class generateExpressions:
     container = np.array([])
 
     def __init__(self, varCount):
-        truthTable = []
+        self.truthTable = []
+        self.curExp = []
+        self.varCount = varCount
 
 
-    def genTruthTable(self, varCount):
-        table = []
+    def genTruthTable(self):
+        self.truthTable = list(itertools.product([False, True], repeat=self.varCount))
 
-        '''
-        0
-        1
-        
-        0 0
-        0 1
-        1 0 
-        1 1
-        
-        0 0 0
-        0 0 1
-        0 1 0
-        0 1 1
-        1 0 0
-        1 0 1
-        1 1 0
-        1 1 1
-        '''
-
-        for i in range(pow(2, varCount)):
-            for i in range(varCount):
-                pow(2, varCount-i) / 2
-                #do a thing think about it later
+    def solve(self):
+        for i in range(pow(2, pow(2, self.varCount))):
+            print("gang")
+            #generate current expression
 
 
+    def simplifySet(self):
+        print("ba")
 
 
 class Statement:
@@ -55,7 +41,7 @@ class Statement:
     verbose = False
     trivial = False
 
-    def __init__(self, rawString, modifiers):
+    def __init__(self, rawString, modifiers, discreteVars):
 
         if("-t" in modifiers):
             self.trivial = True
@@ -78,16 +64,17 @@ class Statement:
                     #check to see if it's the biggest
                     if(ord(term[var])-64 > self.highestVar):
                         self.highestVar = ord(term[var]) - 64
+                    #
+                    # #Calc nDiscreteVars
+                    # for i in range(ord(term[var])-64):
+                    #     if(len(regArr) == i):
+                    #         regArr.append(0)
+                    # if(regArr[ord(term[var]) - 65] == 0):
+                    #     regArr[ord(term[var]) - 65] += 1
 
-                    #Calc nDiscreteVars
-                    for i in range(ord(term[var])-64):
-                        if(len(regArr) == i):
-                            regArr.append(0)
-                    if(regArr[ord(term[var]) - 65] == 0):
-                        regArr[ord(term[var]) - 65] += 1
-
-        #calc the quantity of discrete vars
-        self.nDiscreteVars = sum(map(abs, regArr))
+        # #calc the quantity of discrete vars
+        # self.nDiscreteVars = sum(map(abs, regArr))
+        self.nDiscreteVars = discreteVars
 
         #build numpy container
         self.container = np.array(np.zeros((len(terms), self.highestVar),np.int8))
@@ -118,7 +105,11 @@ class Statement:
         if(-1 in product):
             return 0
         else:
-            return pow(2, self.nDiscreteVars - (sum(np.abs(np.subtract(arr1, arr2))) + sum(product)))
+            sub = np.abs(np.subtract(arr1, arr2))
+
+            output = self.nDiscreteVars - (sum(sub) + sum(product))
+            return pow(2, output)
+
 
     def printChilderhoseLiuMap(self):
         terms = "a"
@@ -286,22 +277,29 @@ class Statement:
 #D'B + A'B'C + ABC' + A'CE + CDE + EABC + ABDE (merged no trivial)
 #D'B + A'B'C + ABC' + A'CE + ACDE + EABC + ABDE + A'CDE
 
-booleanStatement = input("Enter Boolean Statement in the form of sum of products")
+if(input("b for bool, g to gen truth table") == "g"):
+    exp = generateExpressions(3)
+    exp.genTruthTable()
+    exp.solve()
 
-stat = Statement(booleanStatement, "-verbose -trivial")
-stat.printChilderhoseLiuMap()
+else:
+    booleanStatement = input("Enter Boolean Statement in the form of sum of products")
+    discVar = input("Input Number of Discrete Variables")
 
-stat.trivialSolve()
+    stat = Statement(booleanStatement, "-verbose -trivial", discVar)
+    stat.printChilderhoseLiuMap()
 
-stamp = time.time()
+    stat.trivialSolve()
 
-stat.removeGhostTerm()
-stat.printChilderhoseLiuMap()
+    stamp = time.time()
 
-timeTook = (time.time() - stamp)*1000000000
+    stat.removeGhostTerm()
+    stat.printChilderhoseLiuMap()
 
-print("NS = " + str(timeTook))
+    timeTook = (time.time() - stamp)*1000000000
 
-#0.25 ns per cycle
-print("At 3ghz that is " + str((round(timeTook/0.25))) + " Processor Cycles")
-print(str(round(timeTook/0.25)))
+    print("NS = " + str(timeTook))
+
+    #0.25 ns per cycle
+    print("At 3ghz that is " + str((round(timeTook/0.25))) + " Processor Cycles")
+    print(str(round(timeTook/0.25)))
