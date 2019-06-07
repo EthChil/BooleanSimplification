@@ -1,13 +1,39 @@
 import time
 import numpy as np
+import itertools
 
 #TODO: compare speed difference of map(abs, arr) vs np.abs(arr)
 #TODO: look into the int8 stuff for numpy array
+#TODO: print the total overlaps at every step and the TQs
+#TODO: render truth tables
+#TODO: New class to generate all boolean expressions
+
+class generateExpressions:
+    container = np.array([])
+
+    def __init__(self, varCount):
+        self.truthTable = []
+        self.curExp = []
+        self.varCount = varCount
+
+
+    def genTruthTable(self):
+        self.truthTable = list(itertools.product([False, True], repeat=self.varCount))
+
+    def solve(self):
+        for i in range(pow(2, pow(2, self.varCount))):
+            print("gang")
+            #generate current expression
+
+
+    def simplifySet(self):
+        print("ba")
 
 
 booleanStatement = input("Enter Boolean Statement in the form of sum of products")
 
 #A'B'D'E'F'+A'B'CD'E'+A'CD'E'F+A'BCD'F+A'BD'EF+A'BC'D'E+BC'D'EF'
+
 
 class Statement:
     nDiscreteVars = 0
@@ -20,7 +46,7 @@ class Statement:
     verbose = False
     trivial = False
 
-    def __init__(self, rawString, modifiers):
+    def __init__(self, rawString, modifiers, discreteVars):
 
         if("-t" in modifiers):
             self.trivial = True
@@ -43,16 +69,17 @@ class Statement:
                     #check to see if it's the biggest
                     if(ord(term[var])-64 > self.highestVar):
                         self.highestVar = ord(term[var]) - 64
+                    #
+                    # #Calc nDiscreteVars
+                    # for i in range(ord(term[var])-64):
+                    #     if(len(regArr) == i):
+                    #         regArr.append(0)
+                    # if(regArr[ord(term[var]) - 65] == 0):
+                    #     regArr[ord(term[var]) - 65] += 1
 
-                    #Calc nDiscreteVars
-                    for i in range(ord(term[var])-64):
-                        if(len(regArr) == i):
-                            regArr.append(0)
-                    if(regArr[ord(term[var]) - 65] == 0):
-                        regArr[ord(term[var]) - 65] += 1
-
-        #calc the quantity of discrete vars
-        self.nDiscreteVars = sum(map(abs, regArr))
+        # #calc the quantity of discrete vars
+        # self.nDiscreteVars = sum(map(abs, regArr))
+        self.nDiscreteVars = discreteVars
 
         #build numpy container
         self.container = np.array(np.zeros((len(terms), self.highestVar),np.int8))
@@ -83,7 +110,11 @@ class Statement:
         if(-1 in product):
             return 0
         else:
-            return pow(2, self.nDiscreteVars - (sum(np.abs(np.subtract(arr1, arr2))) + sum(product)))
+            sub = np.abs(np.subtract(arr1, arr2))
+
+            output = self.nDiscreteVars - (sum(sub) + sum(product))
+            return pow(2, output)
+
 
     def printChilderhoseLiuMap(self):
         terms = "a"
@@ -96,6 +127,7 @@ class Statement:
         print("".ljust(10), end ="")
         for i in self.tags:
             print(i.ljust(10), end ="")
+
         print("")
 
 
@@ -106,6 +138,7 @@ class Statement:
                     print(str(self.calculateOverlapNum(self.container[term1Ptr], self.container[term2Ptr])).ljust(10), end ="")
                 else:
                     print("X".ljust(10), end ="")
+
             print("")
 
 
@@ -156,7 +189,7 @@ class Statement:
         for row in range(len(self.childerhoseLiuMap)):
             TQ.append(self.generateTailQuotient(self.childerhoseLiuMap[row], self.container[row]))
 
-        #if all of the TQs are below 0 then exit
+        #if all of the TQs are above 0 then exit
         endCond = True
         for q in TQ:
             if(q <= 0):
@@ -216,6 +249,13 @@ class Statement:
                             self.tags[term1] = self.genTermText(self.container[term1])
                             print("into " + self.tags[term1])
 
+                if(term1 != term2 and np.array_equal(set[term1], set[term2])):
+                    print("Removed duplicate " + self.tags[term1])
+                    self.container = np.delete(self.container, term2, axis=0)
+                    del self.tags[term2]
+
+
+
     def genTermText(self, term):
         output = ""
 
@@ -244,20 +284,29 @@ class Statement:
 #D'B + A'B'C + ABC' + A'CE + CDE + EABC + ABDE (merged no trivial)
 #D'B + A'B'C + ABC' + A'CE + ACDE + EABC + ABDE + A'CDE
 
-stat = Statement(booleanStatement, "-verbose -trivial")
-stat.printChilderhoseLiuMap()
+if(input("b for bool, g to gen truth table") == "g"):
+    exp = generateExpressions(3)
+    exp.genTruthTable()
+    exp.solve()
 
-stat.trivialSolve()
+else:
+    booleanStatement = input("Enter Boolean Statement in the form of sum of products")
+    discVar = input("Input Number of Discrete Variables")
 
-stamp = time.time()
+    stat = Statement(booleanStatement, "-verbose -trivial", discVar)
+    stat.printChilderhoseLiuMap()
 
-stat.removeGhostTerm()
-stat.printChilderhoseLiuMap()
+    stat.trivialSolve()
 
-timeTook = (time.time() - stamp)*1000000000
+    stamp = time.time()
 
-print("NS = " + str(timeTook))
+    stat.removeGhostTerm()
+    stat.printChilderhoseLiuMap()
 
-#0.25 ns per cycle
-print("At 3ghz that is " + str((round(timeTook/0.25))) + " Processor Cycles")
-print(str(round(timeTook/0.25)))
+    timeTook = (time.time() - stamp)*1000000000
+
+    print("NS = " + str(timeTook))
+
+    #0.25 ns per cycle
+    print("At 3ghz that is " + str((round(timeTook/0.25))) + " Processor Cycles")
+    print(str(round(timeTook/0.25)))
